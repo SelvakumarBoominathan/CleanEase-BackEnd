@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import connect from "./database/connection.js";
+import router from "./router/route.js";
 
 //creating server
 const app = express();
@@ -23,6 +24,8 @@ const port = 8000;
 app.get("/", (req, res) => {
   res.status(201).json("Home GET Request");
 });
+
+app.use("/api", router);
 
 //server listener only if there is valid Mongo connection established
 
