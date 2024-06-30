@@ -27,7 +27,7 @@ export async function getUser(req, res) {
 // get user details from userdata {email: 'selva@gmail.com'}
 // update otp details to user {otp: '22222'}
 // http://localhost:8000/api/generateOTP
-export async function updateOTP(req, res) {
+export async function generateOTP(req, res) {
   res.json("Generate OTP to user obj");
 }
 
@@ -39,9 +39,14 @@ export async function verifyOTP(req, res) {
   res.json("verifyOTP OTP in user obj");
 }
 
+// GEt method for creating session
+export async function createResetSession(req, res) {
+  res.json("Creating session for password update");
+}
+
 // PATCH req to update the password
 // {newpassword: '111111111s$S', reenterpassword: '111111111s$S'}
 // http://localhost:8000/api/updatepassword
-export async function updatePassword(req, res) {
+export async function resetPassword(req, res) {
   res.json("Password has been updated");
 }
