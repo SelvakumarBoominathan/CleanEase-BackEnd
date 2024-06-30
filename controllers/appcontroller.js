@@ -1,3 +1,5 @@
+import UserModel from "../models/userModel.js";
+
 // POST request to create new user
 //   "firstname": "Selvakumar",
 //   "lastname": "B",
@@ -8,7 +10,20 @@
 
 // file to update the user inputs
 export async function register(req, res) {
-  res.json("Register a new user");
+  try {
+    const { name, userName, email, password } = req.body;
+
+    //Check the existing user
+    const existUsername = new Promise((resolve, reject) => {
+      UserModel.findOne({ userName }, function (err, user) {
+        if (err) reject(new Error(err));
+        if (user) reject({ error: "Please enter a unique Username" });
+        resolve();
+      });
+    });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 }
 
 // POST req to login {name: 'selva22', pass: '11111'}
@@ -17,7 +32,7 @@ export async function login(req, res) {
   res.json("User LOGIN");
 }
 
-// GET req to login {name: 'selva22', pass: '11111'}
+// GET req to login {username: 'selva22', password: '11111'}
 // http://localhost:8000/api/user/:username
 export async function getUser(req, res) {
   res.json("User Details");
