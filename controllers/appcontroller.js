@@ -1,28 +1,40 @@
 import UserModel from "../models/userModel.js";
+import bcrypt from "bcrypt";
 
-// POST request to create new user
-//   "firstname": "Selvakumar",
-//   "lastname": "B",
-//   "email": "selvans2k@gmail.com",
-//   "password": "1111",
-//   "confirmpassword": "1111",
-//    http://localhost:8000/api/register
-
-// file to update the user inputs
 export async function register(req, res) {
   try {
     const { name, userName, email, password } = req.body;
 
-    //Check the existing user
-    const existUsername = new Promise((resolve, reject) => {
-      UserModel.findOne({ userName }, function (err, user) {
-        if (err) reject(new Error(err));
-        if (user) reject({ error: "Please enter a unique Username" });
-        resolve();
-      });
+    // Check if username and email exist
+    const [usernameCheck, emailCheck] = await Promise.all([
+      UserModel.findOne({ userName }).exec(),
+      UserModel.findOne({ email }).exec(),
+    ]);
+
+    if (usernameCheck) {
+      return res.status(400).send({ error: "Username already exists" });
+    }
+
+    if (emailCheck) {
+      return res.status(400).send({ error: "Email already exists" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create and save the new user
+    const newUser = new UserModel({
+      name,
+      userName,
+      email,
+      password: hashedPassword,
     });
+
+    await newUser.save();
+
+    return res.status(200).send({ msg: "User registered successfully." });
   } catch (error) {
-    return res.status(500).send(error);
+    return res.status(500).send({ error: error.message });
   }
 }
 
@@ -54,7 +66,7 @@ export async function verifyOTP(req, res) {
   res.json("verifyOTP OTP in user obj");
 }
 
-// GEt method for creating session
+// GET method for creating session
 export async function createResetSession(req, res) {
   res.json("Creating session for password update");
 }
