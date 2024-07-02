@@ -103,7 +103,10 @@ export async function getUser(req, res) {
     const user = await UserModel.findOne({ username });
 
     if (!user) return res.status(404).send({ error: "user not found" });
-    return res.status(200).send(user);
+
+    // Remove password from the user  (converting it to JSON to omit unnecessay data from mongoose)
+    const { password, ...rest } = Object.assign({}, user.toJSON());
+    return res.status(200).send(rest);
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
