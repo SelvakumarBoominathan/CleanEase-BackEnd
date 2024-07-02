@@ -6,7 +6,7 @@ const router = Router();
 
 // Create or POST method
 router.route("/register").post(controller.register); // create a new user
-router.route("/Login").post(controller.login); // Login to the app
+router.route("/Login").post(controller.verifyUser, controller.login); // Login to the app (first verify user exist in DB and then run login code).controller.verifyUser is a middleware
 router.route("/authEmail").post((req, res) => res.end()); // put OTP in the obj
 // router.route("/otpvalidation").post((req, res) => res.json("OTP route"));
 // router.route("/setpassword").post((req, res) => res.json("set password route"));
