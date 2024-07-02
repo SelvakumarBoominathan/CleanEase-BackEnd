@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, express } from "express";
 import bcrypt from "bcrypt";
 import * as controller from "../controllers/appcontroller.js";
 

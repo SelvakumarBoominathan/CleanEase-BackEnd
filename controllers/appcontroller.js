@@ -2,18 +2,17 @@ import UserModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
-import userModel from "../models/userModel.js";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
   try {
-    const { username } = (req.method = "GET" ? req.query : req.body);
+    const { username } = req.method === "GET" ? req.query : req.body;
 
     const exist = await UserModel.findOne({ username });
     if (!exist) return res.status(404).send({ error: "User not Exist" });
     next();
   } catch (error) {
-    return res.status(404).send({ error: "Authentication Error" });
+    return res.status(500).send({ error: "Authentication Error" });
   }
 }
 
@@ -101,7 +100,7 @@ export async function getUser(req, res) {
   try {
     if (!username) return res.status(400).send({ error: "Invalid username!" });
 
-    const user = await userModel.findOne({ username });
+    const user = await UserModel.findOne({ username });
 
     if (!user) return res.status(404).send({ error: "user not found" });
     return res.status(200).send(user);

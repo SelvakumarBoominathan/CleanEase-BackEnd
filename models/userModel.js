@@ -22,4 +22,4 @@ const userSchema = new mongoose.Schema({
 });
 
 // Export the model, ensuring it is not overwritten if it already exists
-export default mongoose.models.User || mongoose.model("User", userSchema);
+export default mongoose.models.user || mongoose.model("user", userSchema);
