@@ -2,6 +2,7 @@ import UserModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
+import userModel from "../models/userModel.js";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
@@ -96,7 +97,17 @@ export async function login(req, res) {
 // GET req to login
 // http://localhost:8000/api/user/:username
 export async function getUser(req, res) {
-  res.json("User Details");
+  const { username } = req.params;
+  try {
+    if (!username) return res.status(400).send({ error: "Invalid username!" });
+
+    const user = await userModel.findOne({ username });
+
+    if (!user) return res.status(404).send({ error: "user not found" });
+    return res.status(200).send(user);
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
 }
 
 // GET req to generate otp in user Obj
