@@ -144,7 +144,7 @@ export async function verifyOTP(req, res) {
 // http://localhost:8000/api/createResetSession
 export async function createResetSession(req, res) {
   if (req.app.locals.resetSession) {
-    req.app.locals.resetSession = false;
+    req.app.locals.resetSession = false; // this will create a reset session only once
     return res.status(201).send({ msg: "Access granted" });
   }
   return res.status(440).send({ error: "Session expired!" });
