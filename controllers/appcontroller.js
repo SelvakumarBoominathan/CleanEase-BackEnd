@@ -117,17 +117,27 @@ export async function getUser(req, res) {
 // http://localhost:8000/api/generateOTP
 export async function generateOTP(req, res) {
   //otp-generator will generate 6 dig OTP without upper, lowercase and special chars (only numbers)
-  const OTP = await otpGenerator.generate(6, {
+  req.app.locals.OTP = await otpGenerator.generate(6, {
     lowerCaseAlphabets: false,
     upperCaseAlphabets: false,
     specialChars: false,
   });
+  res.status(201).send({ code: req.app.locals.OTP });
 }
 
 // GET req to verifyOTP otp in user Obj
 // http://localhost:8000/api/verifyOTP
 export async function verifyOTP(req, res) {
-  res.json("verifyOTP OTP in user obj");
+  const { code } = req.query;
+
+  //Comparing the OTP from req and stored variable in middleware
+  if (parseInt(req.app.locals.OTP) === parseInt(code)) {
+    //resettingthe OTP and session values in the middleware
+    req.app.locals.OTP = null;
+    req.app.locals.resetSession = true;
+    return res.status(201).send({ msg: "OTP verified!" });
+  }
+  return res.status(400).send({ error: "Invalid OTP." });
 }
 
 // GET method for creating session
