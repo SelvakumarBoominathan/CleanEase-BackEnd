@@ -1,6 +1,7 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import * as controller from "../controllers/appcontroller.js";
+import { localVariables } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -13,7 +14,11 @@ router.route("/authEmail").post((req, res) => res.end()); // put OTP in the obj
 
 // Read or GET method
 router.route("/user/:username").get(controller.getUser); // get the user details
-router.route("/genOTP").get(controller.generateOTP); // to generate random OTP
+
+//First to verify user and then generate OTP. OTP variables will be generated using middleware
+router
+  .route("/genOTP")
+  .get(controller.verifyUser, localVariables, controller.generateOTP); // to generate random OTP
 router.route("/authUser").get(controller.verifyOTP); // verify generated OTP
 router.route("/ResetSession").get(controller.createResetSession); // creating session for pass update
 
