@@ -151,39 +151,68 @@ export async function createResetSession(req, res) {
 }
 
 // PATCH req to update the password
-// http://localhost:8000/api/resetpassword
+// http://localhost:8000/api/resetPassword
+// export async function resetPassword(req, res) {
+//   try {
+//     const { username, password } = req.body;
+
+//     try {
+//       UserModel.findOne({ username })
+//         .then((user) => {
+//           bcrypt
+//             .hash(password, 10) //get the password hashed
+//             .then((hashedPassword) => {
+//               UserModel.updateOne(
+//                 // { username: user.username },
+//                 { password: hashedPassword },
+//                 function (err, data) {
+//                   if (err) throw err;
+//                   return res
+//                     .status(201)
+//                     .send({ msg: "Password updated successfully!" });
+//                 }
+//               );
+//             })
+//             .catch((error) => {
+//               return res.status(500).send({ error: "unable to hash password" });
+//             });
+//         })
+//         .catch((error) => {
+//           return res.status(404).send({ error: "username not found" });
+//         });
+//     } catch (error) {
+//       return res.status(500).send({ error });
+//     }
+//   } catch (error) {
+//     res.status(401).send({ error });
+//   }
+// }
+
 export async function resetPassword(req, res) {
   try {
+    if (!req.app.locals.resetSession) {
+      return res.status(440).send({ error: "Session expired!" });
+    }
+
     const { username, password } = req.body;
 
-    try {
-      UserModel.findOne({ username })
-        .then((user) => {
-          bcrypt
-            .hash(password, 10) //get the password hashed
-            .then((hashedPassword) => {
-              UserModel.updateOne(
-                { username: user.username },
-                { password: hashedPassword },
-                function (err, data) {
-                  if (err) throw err;
-                  return res
-                    .status(201)
-                    .send({ msg: "password updated successfully!" });
-                }
-              );
-            })
-            .catch((error) => {
-              return res.status(500).send({ error: "unable to hash password" });
-            });
-        })
-        .catch((error) => {
-          return res.status(404).send({ error: "username not found" });
-        });
-    } catch (error) {
-      return res.status(500).send({ error });
+    // Find user by username
+    const user = await UserModel.findOne({ username });
+    if (!user) {
+      return res.status(404).send({ error: "username not found" });
     }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password
+    await UserModel.updateOne(
+      { username: user.username },
+      { password: hashedPassword }
+    );
+
+    return res.status(200).send({ msg: "Password updated successfully!" });
   } catch (error) {
-    res.status(401).send({ error });
+    return res.status(500).send({ error: error.message });
   }
 }
