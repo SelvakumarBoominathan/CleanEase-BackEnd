@@ -19,7 +19,7 @@ router.route("/user/:username").get(controller.getUser); // get the user details
 router
   .route("/generateOTP")
   .get(controller.verifyUser, localVariables, controller.generateOTP); // to generate random OTP
-router.route("/authUser").get(controller.verifyOTP); // verify generated OTP
+router.route("/verifyOTP").get(controller.verifyOTP); // verify generated OTP
 router.route("/ResetSession").get(controller.createResetSession); // creating session for pass update
 
 // Update or PATCH method
