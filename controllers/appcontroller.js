@@ -140,9 +140,14 @@ export async function verifyOTP(req, res) {
   return res.status(400).send({ error: "Invalid OTP." });
 }
 
-// GET method for creating session
+// GET method for creating resetsession
+// http://localhost:8000/api/createResetSession
 export async function createResetSession(req, res) {
-  res.json("Creating session for password update");
+  if (req.app.locals.resetSession) {
+    req.app.locals.resetSession = false;
+    return res.status(201).send({ msg: "Access granted" });
+  }
+  return res.status(440).send({ error: "Session expired!" });
 }
 
 // PATCH req to update the password
