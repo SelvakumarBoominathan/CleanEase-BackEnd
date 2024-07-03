@@ -17,7 +17,7 @@ router.route("/user/:username").get(controller.getUser); // get the user details
 
 //First to verify user and then generate OTP. OTP variables will be generated using middleware
 router
-  .route("/genOTP")
+  .route("/generateOTP")
   .get(controller.verifyUser, localVariables, controller.generateOTP); // to generate random OTP
 router.route("/authUser").get(controller.verifyOTP); // verify generated OTP
 router.route("/ResetSession").get(controller.createResetSession); // creating session for pass update
