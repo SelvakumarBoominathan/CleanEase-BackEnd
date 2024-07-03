@@ -23,7 +23,9 @@ router.route("/verifyOTP").get(controller.verifyOTP); // verify generated OTP
 router.route("/ResetSession").get(controller.createResetSession); // creating session for pass update
 
 // Update or PATCH method
-router.route("/resetPassword").put(controller.resetPassword); // reset password
+router
+  .route("/resetPassword")
+  .patch(controller.verifyUser, controller.resetPassword); // reset password
 
 // Deleta or DEL Method
 
