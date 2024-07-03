@@ -2,6 +2,7 @@ import UserModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
+import otpGenerator from "otp-generator";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
@@ -115,7 +116,12 @@ export async function getUser(req, res) {
 // GET req to generate otp in user Obj
 // http://localhost:8000/api/generateOTP
 export async function generateOTP(req, res) {
-  res.json("Generate OTP to user obj");
+  //otp-generator will generate 6 dig OTP without upper, lowercase and special chars (only numbers)
+  const OTP = await otpGenerator.generate(6, {
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false,
+    specialChars: false,
+  });
 }
 
 // GET req to verifyOTP otp in user Obj
