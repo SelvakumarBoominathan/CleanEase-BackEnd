@@ -63,8 +63,9 @@ export async function signup(req, res) {
   let config = {
     service: "gmail",
     auth: {
-      user: "",
-      pass: "",
+      //using Email and password from .env file(config.js)
+      user: ENV.Email,
+      pass: ENV.Password,
     },
   };
 
