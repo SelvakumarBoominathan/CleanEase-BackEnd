@@ -1,5 +1,4 @@
 import { Router } from "express";
-import bcrypt from "bcrypt";
 import * as controller from "../controllers/appcontroller.js";
 import { localVariables } from "../middleware/auth.js";
 
@@ -8,8 +7,9 @@ const router = Router();
 // Create or POST method
 router.route("/register").post(controller.register); // create a new user
 router.route("/login").post(controller.verifyUser, controller.login); // Login to the app (first verify user exist in DB and then run login code).controller.verifyUser is a middleware
-router.route("/authEmail").post((req, res) => res.end()); // put OTP in the obj
-// router.route("/otpvalidation").post((req, res) => res.json("OTP route"));
+router.route("/signup").post(controller.signup); // sending OTP to email
+router.route("/getbill").post(controller.getbill); // sample
+router.route("/otpvalidation").post((req, res) => res.json("OTP route"));
 // router.route("/setpassword").post((req, res) => res.json("set password route"));
 
 // Read or GET method

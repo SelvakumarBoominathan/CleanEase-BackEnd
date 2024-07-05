@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
 import otpGenerator from "otp-generator";
+import nodemailer from "nodemailer";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
@@ -52,6 +53,49 @@ export async function register(req, res) {
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
+}
+
+// Post request for signup email -  sending OTP to Gmail
+// http://localhost:8000/api/signup
+export async function signup(req, res) {
+  let testAccount = await nodemailer.createTestAccount();
+
+  let config = {
+    service: "gmail",
+    auth: {
+      user: "",
+      pass: "",
+    },
+  };
+
+  const transporter = nodemailer.createTransport(config);
+
+  // Object to send mail
+  let message = {
+    from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
+    to: "bar@example.com, baz@example.com", // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Your OTP will be 984536!", // plain text body
+    html: "<b>Your OTP will be 984536!</b>", // html body
+  };
+
+  transporter
+    .sendMail(message)
+    .then((info) => {
+      return res.status(201).json({
+        msg: "Mail Sent Successfully!",
+        info: info.messageId,
+        preview: nodemailer.getTestMessageUrl(info),
+      });
+    })
+    .catch((error) => {
+      return res.status(500).json({ error });
+    });
+}
+
+// http://localhost:8000/api/getbill
+export async function getbill(req, res) {
+  return res.status(201).send({ msg: "Get bill successfully!" });
 }
 
 // POST req to login
