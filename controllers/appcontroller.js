@@ -55,45 +55,44 @@ export async function register(req, res) {
   }
 }
 
-// Post request for signup email -  sending OTP to Gmail
-// http://localhost:8000/api/signup
-export async function signup(req, res) {
-  // let testAccount = await nodemailer.createTestAccount();
-  const { email } = req.body;
+// // Post request for signup email -  sending OTP to Gmail for mail verification
+// // http://localhost:8000/api/registermail
+// export async function registermail(req, res) {
+//   // let testAccount = await nodemailer.createTestAccount();
+//   const { email } = req.body;
 
-  let config = {
-    service: "gmail",
-    auth: {
-      //using Email and password from .env file(config.js)
-      user: ENV.Email,
-      pass: ENV.Password,
-    },
-  };
+//   let config = {
+//     service: "gmail",
+//     auth: {
+//       //using Email and password from .env file(config.js)
+//       user: ENV.Email,
+//       pass: ENV.Password,
+//     },
+//   };
 
-  const transporter = nodemailer.createTransport(config);
+//   const transporter = nodemailer.createTransport(config);
 
-  // Object to send mail
-  let message = {
-    from: '"Maddison Foo Koch 👻" <`${ENV.Email}`>', // sender address
-    to: email, //"selvans2k@gmail.com", // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Your OTP will is 984536!", // plain text body
-    html: "<b>Your OTP will be <h1>984536!<h1></b>", // html body
-  };
+//   // Object to send mail
+//   let message = {
+//     from: "'CleanEase' <`${ENV.Email}`>", // sender address
+//     to: email, // list of receivers
+//     subject: "OTP Verification", // Subject line
+//     html: `<b>Your OTP will be <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
+//   };
 
-  transporter
-    .sendMail(message)
-    .then((info) => {
-      return res.status(201).json({
-        msg: "Mail Sent Successfully!",
-        info: info.messageId,
-        preview: nodemailer.getTestMessageUrl(info),
-      });
-    })
-    .catch((error) => {
-      return res.status(500).json({ error });
-    });
-}
+//   transporter
+//     .sendMail(message)
+//     .then((info) => {
+//       return res.status(201).json({
+//         msg: "Mail Sent Successfully!",
+//         info: info.messageId,
+//         preview: nodemailer.getTestMessageUrl(info),
+//       });
+//     })
+//     .catch((error) => {
+//       return res.status(500).json({ error });
+//     });
+// }
 
 // http://localhost:8000/api/getbill
 export async function getbill(req, res) {
@@ -195,44 +194,6 @@ export async function createResetSession(req, res) {
   }
   return res.status(440).send({ error: "Session expired!" });
 }
-
-// PATCH req to update the password
-// http://localhost:8000/api/resetPassword
-// export async function resetPassword(req, res) {
-//   try {
-//     const { username, password } = req.body;
-
-//     try {
-//       UserModel.findOne({ username })
-//         .then((user) => {
-//           bcrypt
-//             .hash(password, 10) //get the password hashed
-//             .then((hashedPassword) => {
-//               UserModel.updateOne(
-//                 // { username: user.username },
-//                 { password: hashedPassword },
-//                 function (err, data) {
-//                   if (err) throw err;
-//                   return res
-//                     .status(201)
-//                     .send({ msg: "Password updated successfully!" });
-//                 }
-//               );
-//             })
-//             .catch((error) => {
-//               return res.status(500).send({ error: "unable to hash password" });
-//             });
-//         })
-//         .catch((error) => {
-//           return res.status(404).send({ error: "username not found" });
-//         });
-//     } catch (error) {
-//       return res.status(500).send({ error });
-//     }
-//   } catch (error) {
-//     res.status(401).send({ error });
-//   }
-// }
 
 export async function resetPassword(req, res) {
   try {
