@@ -58,7 +58,8 @@ export async function register(req, res) {
 // Post request for signup email -  sending OTP to Gmail
 // http://localhost:8000/api/signup
 export async function signup(req, res) {
-  let testAccount = await nodemailer.createTestAccount();
+  // let testAccount = await nodemailer.createTestAccount();
+  const { email } = req.body;
 
   let config = {
     service: "gmail",
@@ -73,11 +74,11 @@ export async function signup(req, res) {
 
   // Object to send mail
   let message = {
-    from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
-    to: "bar@example.com, baz@example.com", // list of receivers
+    from: '"Maddison Foo Koch 👻" <`${ENV.Email}`>', // sender address
+    to: email, //"selvans2k@gmail.com", // list of receivers
     subject: "Hello ✔", // Subject line
-    text: "Your OTP will be 984536!", // plain text body
-    html: "<b>Your OTP will be 984536!</b>", // html body
+    text: "Your OTP will is 984536!", // plain text body
+    html: "<b>Your OTP will be <h1>984536!<h1></b>", // html body
   };
 
   transporter
