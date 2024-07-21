@@ -61,41 +61,49 @@ export async function registermail(req, res) {
   // let testAccount = await nodemailer.createTestAccount();
   const { email } = req.body;
 
-  let config = {
-    service: "gmail",
-    auth: {
-      //using Email and password from .env file(config.js)
-      user: ENV.Email,
-      pass: ENV.Password,
-    },
-  };
+  try {
+    // Verify if email exists in the database
+    const user = await UserModel.findOne({ email }).exec();
+    if (!user) {
+      return res.status(404).send({ error: "Email not found" });
+    }
 
-  const transporter = nodemailer.createTransport(config);
+    //Email configuration
+    let config = {
+      service: "gmail",
+      auth: {
+        //using Email and password from .env file(config.js)
+        user: ENV.Email,
+        pass: ENV.Password,
+      },
+    };
 
-  // Object to send mail
-  let message = {
-    from: "'CleanEase' <`${ENV.Email}`>", // sender address
-    to: email, // list of receivers
-    subject: "OTP Verification", // Subject line
-    html: `<b>Your OTP will be <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
-  };
+    const transporter = nodemailer.createTransport(config);
 
-  transporter
-    .sendMail(message)
-    .then((info) => {
-      return res.status(201).json({
-        msg: "Mail Sent Successfully!",
-        info: info.messageId,
-        preview: nodemailer.getTestMessageUrl(info),
+    // Object to send mail
+    let message = {
+      from: "'CleanEase' <`${ENV.Email}`>", // sender address
+      to: email, // list of receivers
+      subject: "OTP Verification", // Subject line
+      html: `<b>Your OTP is <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
+    };
+
+    transporter
+      .sendMail(message)
+      .then((info) => {
+        return res.status(201).json({
+          msg: "Mail Sent Successfully!",
+          info: info.messageId,
+          preview: nodemailer.getTestMessageUrl(info),
+        });
+      })
+      .catch((error) => {
+        return res.status(500).json({ error });
       });
-    })
-    .catch((error) => {
-      return res.status(500).json({ error });
-    });
+  } catch (error) {
+    return res.status(500).send({ error: error.message });
+  }
 }
-
-
-
 
 // http://localhost:8000/api/getbill
 export async function getbill(req, res) {
