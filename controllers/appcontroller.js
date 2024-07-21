@@ -57,42 +57,45 @@ export async function register(req, res) {
 
 // // Post request for signup email -  sending OTP to Gmail for mail verification
 // // http://localhost:8000/api/registermail
-// export async function registermail(req, res) {
-//   // let testAccount = await nodemailer.createTestAccount();
-//   const { email } = req.body;
+export async function registermail(req, res) {
+  // let testAccount = await nodemailer.createTestAccount();
+  const { email } = req.body;
 
-//   let config = {
-//     service: "gmail",
-//     auth: {
-//       //using Email and password from .env file(config.js)
-//       user: ENV.Email,
-//       pass: ENV.Password,
-//     },
-//   };
+  let config = {
+    service: "gmail",
+    auth: {
+      //using Email and password from .env file(config.js)
+      user: ENV.Email,
+      pass: ENV.Password,
+    },
+  };
 
-//   const transporter = nodemailer.createTransport(config);
+  const transporter = nodemailer.createTransport(config);
 
-//   // Object to send mail
-//   let message = {
-//     from: "'CleanEase' <`${ENV.Email}`>", // sender address
-//     to: email, // list of receivers
-//     subject: "OTP Verification", // Subject line
-//     html: `<b>Your OTP will be <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
-//   };
+  // Object to send mail
+  let message = {
+    from: "'CleanEase' <`${ENV.Email}`>", // sender address
+    to: email, // list of receivers
+    subject: "OTP Verification", // Subject line
+    html: `<b>Your OTP will be <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
+  };
 
-//   transporter
-//     .sendMail(message)
-//     .then((info) => {
-//       return res.status(201).json({
-//         msg: "Mail Sent Successfully!",
-//         info: info.messageId,
-//         preview: nodemailer.getTestMessageUrl(info),
-//       });
-//     })
-//     .catch((error) => {
-//       return res.status(500).json({ error });
-//     });
-// }
+  transporter
+    .sendMail(message)
+    .then((info) => {
+      return res.status(201).json({
+        msg: "Mail Sent Successfully!",
+        info: info.messageId,
+        preview: nodemailer.getTestMessageUrl(info),
+      });
+    })
+    .catch((error) => {
+      return res.status(500).json({ error });
+    });
+}
+
+
+
 
 // http://localhost:8000/api/getbill
 export async function getbill(req, res) {

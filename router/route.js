@@ -8,6 +8,9 @@ const router = Router();
 // Create or POST method
 router.route("/register").post(controller.register); // create a new user
 router.route("/registermail").post(localVariables, mailer.registermail); // sending OTP to email
+router
+  .route("/authenticate")
+  .post(controller.verifyUser, (req, res) => res.end()); //authenticate user (from client)
 router.route("/login").post(controller.verifyUser, controller.login); // Login to the app (first verify user exist in DB and then run login code).controller.verifyUser is a middleware
 
 router.route("/getbill").post(controller.getbill); // sample
