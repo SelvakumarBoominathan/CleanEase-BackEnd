@@ -55,24 +55,44 @@ export async function register(req, res) {
   }
 }
 
+// GET req to generate otp in user Obj
+// http://localhost:8000/api/generateOTP
+// Generate OTP
+export const generateOTP = async (req, res) => {
+  const { username } = req.query;
+  try {
+    const user = await UserModel.findOne({ username });
+    if (!user) return res.status(404).send({ error: "User not found" });
+
+    const otp = otpGenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+    req.app.locals.OTP = otp;
+
+    res.status(201).send({ code: otp });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
 // // Post request for signup email -  sending OTP to Gmail for mail verification
 // // http://localhost:8000/api/registermail
-export async function registermail(req, res) {
-  // let testAccount = await nodemailer.createTestAccount();
+export const registermail = async (req, res) => {
   const { email } = req.body;
 
   try {
     // Verify if email exists in the database
-    const user = await UserModel.findOne({ email }).exec();
+    const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(404).send({ error: "Email not found" });
     }
 
-    //Email configuration
-    let config = {
+    // Email configuration
+    const config = {
       service: "gmail",
       auth: {
-        //using Email and password from .env file(config.js)
         user: ENV.Email,
         pass: ENV.Password,
       },
@@ -81,13 +101,14 @@ export async function registermail(req, res) {
     const transporter = nodemailer.createTransport(config);
 
     // Object to send mail
-    let message = {
-      from: "'CleanEase' <`${ENV.Email}`>", // sender address
+    const message = {
+      from: `"CleanEase" <${ENV.Email}>`, // sender address
       to: email, // list of receivers
       subject: "OTP Verification", // Subject line
       html: `<b>Your OTP is <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
     };
 
+    // Send mail
     transporter
       .sendMail(message)
       .then((info) => {
@@ -98,12 +119,12 @@ export async function registermail(req, res) {
         });
       })
       .catch((error) => {
-        return res.status(500).json({ error });
+        return res.status(500).json({ error: error.message });
       });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
-}
+};
 
 // http://localhost:8000/api/getbill
 export async function getbill(req, res) {
@@ -167,18 +188,6 @@ export async function getUser(req, res) {
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
-}
-
-// GET req to generate otp in user Obj
-// http://localhost:8000/api/generateOTP
-export async function generateOTP(req, res) {
-  //otp-generator will generate 6 dig OTP without upper, lowercase and special chars (only numbers)
-  req.app.locals.OTP = await otpGenerator.generate(6, {
-    lowerCaseAlphabets: false,
-    upperCaseAlphabets: false,
-    specialChars: false,
-  });
-  res.status(201).send({ code: req.app.locals.OTP });
 }
 
 // GET req to verifyOTP otp in user Obj
