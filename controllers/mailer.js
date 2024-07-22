@@ -4,9 +4,10 @@ import mailgen from "mailgen";
 
 // http://localhost:8000/api/registermail
 let config = {
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+  // host: "smtp.ethereal.email",
+  service: "gmail",
+  // port: 587,
+  // secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
     user: ENV.Email,
     pass: ENV.Password,
@@ -35,6 +36,7 @@ export async function registermail(req, res) {
     body: {
       name: username,
       intro: text || "Welcome to cleanEase!",
+      outro: `Your OTP is: ${req.app.locals.OTP}`,
     },
   };
 
@@ -43,17 +45,20 @@ export async function registermail(req, res) {
   let message = {
     from: ENV.Email,
     to: email,
-    subject: subject || "Signup Successful",
+    subject: subject || "OTP Verification",
     html: emailBody,
   };
 
   //send mail
-  transporter
-    .sendMail(message)
-    .then(() => {
-      res.status(201).send({ msg: "You will receice an Email!" });
-    })
-    .catch((error) => {
-      res.status(500).send({ error });
-    });
+  try {
+    // Send mail
+    let info = await transporter.sendMail(message);
+    console.log("Email sent:", info.messageId); // Debug log
+    res
+      .status(201)
+      .send({ msg: "You will receive an Email!", info: info.messageId });
+  } catch (error) {
+    console.error("Error sending email:", error); // Error log
+    res.status(500).send({ error: "Error sending email" });
+  }
 }
