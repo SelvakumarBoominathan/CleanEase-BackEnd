@@ -24,8 +24,6 @@ let mailgenerator = new mailgen({
   },
 });
 
-
- 
 // Post request for signup email -  sending OTP to Gmail for mail verification
 // http://localhost:8000/api/registermail
 export async function registermail(req, res) {
