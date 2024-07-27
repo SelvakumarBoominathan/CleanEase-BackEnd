@@ -77,8 +77,8 @@ export const generateOTP = async (req, res) => {
   }
 };
 
-// // Post request for signup email -  sending OTP to Gmail for mail verification
-// // http://localhost:8000/api/registermail
+// Post request for signup email -  sending OTP to Gmail for mail verification
+// http://localhost:8000/api/registermail
 export const registermail = async (req, res) => {
   const { email } = req.body;
 
@@ -109,18 +109,17 @@ export const registermail = async (req, res) => {
     };
 
     // Send mail
-    transporter
-      .sendMail(message)
-      .then((info) => {
-        return res.status(201).json({
-          msg: "Mail Sent Successfully!",
-          info: info.messageId,
-          preview: nodemailer.getTestMessageUrl(info),
-        });
-      })
-      .catch((error) => {
-        return res.status(500).json({ error: error.message });
+
+    try {
+      const info = await transporter.sendMail(message);
+      return res.status(201).json({
+        msg: "Mail Sent Successfully!",
+        info: info.messageId,
+        preview: nodemailer.getTestMessageUrl(info),
       });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
