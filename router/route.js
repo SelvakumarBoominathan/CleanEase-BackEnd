@@ -1,13 +1,13 @@
 import { Router } from "express";
 import * as controller from "../controllers/appcontroller.js";
-import * as mailer from "../controllers/mailer.js";
+// import * as mailer from "../controllers/mailer.js";
 import { localVariables } from "../middleware/auth.js";
 
 const router = Router();
 
 // Create or POST method
 router.route("/register").post(controller.register); // create a new user
-router.route("/registermail").post(localVariables, mailer.registermail); // sending OTP to email
+router.route("/registermail").post(localVariables, controller.registermail); // sending OTP to email
 router
   .route("/authenticate")
   .post(controller.verifyUser, (req, res) => res.end()); //authenticate user (from client)
