@@ -170,87 +170,87 @@ export async function getbill(req, res) {
 
 // POST req to login
 // http://localhost:8000/api/login
-// export async function login(req, res) {
-//   const { username, password } = req.body;
-
-//   try {
-//     UserModel.findOne({ username })
-//       .then((user) => {
-//         bcrypt
-//           .compare(password, user.password)
-//           .then((passwordCheck) => {
-//             if (!passwordCheck)
-//               return res.status(400).send({ error: "Dont have Password" });
-//             //Create JWT (JSON Web Token)
-//             const token = Jwt.sign(
-//               {
-//                 username: user.username,
-//               },
-//               ENV.JWT_SECRET,
-//               { expiresIn: "24h" }
-//             );
-//             return res.status(200).send({
-//               msg: "Login Successful..!",
-//               username: user.username,
-//               token,
-//             });
-//           })
-//           .catch((error) => {
-//             return res.status(400).send({ error: "Password does not match" });
-//           });
-//       })
-//       .catch((error) => {
-//         return res.status(404).send({ error: " username not found" });
-//       });
-//   } catch (error) {
-//     return res.status(500).send({ error });
-//   }
-// }
-
 export async function login(req, res) {
   const { username, password } = req.body;
 
   try {
-    const user = await UserModel.findOne({ username });
-
-    if (!user) {
-      return res.status(404).send({ error: "Username not found" });
-    }
-
-    const passwordCheck = await bcrypt.compare(password, user.password);
-
-    if (!passwordCheck) {
-      return res.status(400).send({ error: "Incorrect password" });
-    }
-
-    // Debugging: Check if JWT_SECRET is defined
-    console.log("JWT_SECRET:", ENV.JWT_SECRET);
-
-    // Ensure JWT_SECRET is not undefined
-    if (!ENV.JWT_SECRET) {
-      return res
-        .status(500)
-        .send({ error: "Internal server error. JWT secret is missing." });
-    }
-
-    // Create JWT
-    const token = Jwt.sign(
-      {
-        username: user.username,
-      },
-      ENV.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
-    return res.status(200).send({
-      msg: "Login Successful!",
-      username: user.username,
-      token,
-    });
+    UserModel.findOne({ username })
+      .then((user) => {
+        bcrypt
+          .compare(password, user.password)
+          .then((passwordCheck) => {
+            if (!passwordCheck)
+              return res.status(400).send({ error: "Dont have Password" });
+            //Create JWT (JSON Web Token)
+            const token = Jwt.sign(
+              {
+                username: user.username,
+              },
+              ENV.JWT_SECRET,
+              { expiresIn: "24h" }
+            );
+            return res.status(200).send({
+              msg: "Login Successful..!",
+              username: user.username,
+              token,
+            });
+          })
+          .catch((error) => {
+            return res.status(400).send({ error: "Password does not match" });
+          });
+      })
+      .catch((error) => {
+        return res.status(404).send({ error: " username not found" });
+      });
   } catch (error) {
-    return res.status(500).send({ error: error.message });
+    return res.status(500).send({ error });
   }
 }
+
+// export async function login(req, res) {
+//   const { username, password } = req.body;
+
+//   try {
+//     const user = await UserModel.findOne({ username });
+
+//     if (!user) {
+//       return res.status(404).send({ error: "Username not found" });
+//     }
+
+//     const passwordCheck = await bcrypt.compare(password, user.password);
+
+//     if (!passwordCheck) {
+//       return res.status(400).send({ error: "Incorrect password" });
+//     }
+
+//     // Debugging: Check if JWT_SECRET is defined
+//     console.log("JWT_SECRET:", ENV.JWT_SECRET);
+
+//     // Ensure JWT_SECRET is not undefined
+//     if (!ENV.JWT_SECRET) {
+//       return res
+//         .status(500)
+//         .send({ error: "Internal server error. JWT secret is missing." });
+//     }
+
+//     // Create JWT
+//     const token = Jwt.sign(
+//       {
+//         username: user.username,
+//       },
+//       ENV.JWT_SECRET,
+//       { expiresIn: "24h" }
+//     );
+
+//     return res.status(200).send({
+//       msg: "Login Successful!",
+//       username: user.username,
+//       token,
+//     });
+//   } catch (error) {
+//     return res.status(500).send({ error: error.message });
+//   }
+// }
 
 // GET req to login
 // http://localhost:8000/api/user/:username
