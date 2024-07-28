@@ -35,7 +35,7 @@ app.use("/api", router);
 connect()
   .then(() => {
     try {
-      app.listen(port, () => {
+      app.listen(config.port, () => {
         console.log("server listening to the port : ", port);
       });
     } catch (error) {
