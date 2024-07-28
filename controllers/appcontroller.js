@@ -18,18 +18,56 @@ export async function verifyUser(req, res, next) {
   }
 }
 
+// export async function register(req, res) {
+//   try {
+//     const { name, username, email, password } = req.body;
+//     console.log(name, username, email, password);
+
+//     // Check if username and email exist
+//     const [usernameCheck, emailCheck] = await Promise.all([
+//       UserModel.findOne({ username }).exec(),
+//       UserModel.findOne({ email }).exec(),
+//     ]);
+
+//     if (usernameCheck) {
+//       return res.status(400).send({ error: "username already exists" });
+//     }
+
+//     if (emailCheck) {
+//       return res.status(400).send({ error: "Email already exists" });
+//     }
+
+//     // Hash the password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Create and save the new user
+//     const newUser = new UserModel({
+//       name,
+//       username,
+//       email,
+//       password: hashedPassword,
+//     });
+
+//     await newUser.save();
+
+//     return res.status(200).send({ msg: "User registered successfully." });
+//   } catch (error) {
+//     return res.status(500).send({ error: error.message });
+//   }
+// }
+
 export async function register(req, res) {
   try {
     const { name, username, email, password } = req.body;
 
-    // Check if username and email exist
+    // Check if username or email exists
     const [usernameCheck, emailCheck] = await Promise.all([
       UserModel.findOne({ username }).exec(),
       UserModel.findOne({ email }).exec(),
     ]);
 
     if (usernameCheck) {
-      return res.status(400).send({ error: "username already exists" });
+      return res.status(400).send({ error: "Username already exists" });
     }
 
     if (emailCheck) {
@@ -49,7 +87,7 @@ export async function register(req, res) {
 
     await newUser.save();
 
-    return res.status(200).send({ msg: "User registered successfully." });
+    return res.status(201).send({ msg: "User registered successfully." });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
@@ -132,41 +170,85 @@ export async function getbill(req, res) {
 
 // POST req to login
 // http://localhost:8000/api/login
+// export async function login(req, res) {
+//   const { username, password } = req.body;
+
+//   try {
+//     UserModel.findOne({ username })
+//       .then((user) => {
+//         bcrypt
+//           .compare(password, user.password)
+//           .then((passwordCheck) => {
+//             if (!passwordCheck)
+//               return res.status(400).send({ error: "Dont have Password" });
+//             //Create JWT (JSON Web Token)
+//             const token = Jwt.sign(
+//               {
+//                 username: user.username,
+//               },
+//               ENV.JWT_SECRET,
+//               { expiresIn: "24h" }
+//             );
+//             return res.status(200).send({
+//               msg: "Login Successful..!",
+//               username: user.username,
+//               token,
+//             });
+//           })
+//           .catch((error) => {
+//             return res.status(400).send({ error: "Password does not match" });
+//           });
+//       })
+//       .catch((error) => {
+//         return res.status(404).send({ error: " username not found" });
+//       });
+//   } catch (error) {
+//     return res.status(500).send({ error });
+//   }
+// }
+
 export async function login(req, res) {
   const { username, password } = req.body;
 
   try {
-    UserModel.findOne({ username })
-      .then((user) => {
-        bcrypt
-          .compare(password, user.password)
-          .then((passwordCheck) => {
-            if (!passwordCheck)
-              return res.status(400).send({ error: "Dont have Password" });
-            //Create JWT (JSON Web Token)
-            const token = Jwt.sign(
-              {
-                username: user.username,
-                // userID : user.userID,
-              },
-              ENV.JWT_SECRET,
-              { expiresIn: "24h" }
-            );
-            return res.status(200).send({
-              msg: "Login Successful..!",
-              username: user.username,
-              token,
-            });
-          })
-          .catch((error) => {
-            return res.status(400).send({ error: "Password does not match" });
-          });
-      })
-      .catch((error) => {
-        return res.status(404).send({ error: " username not found" });
-      });
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      return res.status(404).send({ error: "Username not found" });
+    }
+
+    const passwordCheck = await bcrypt.compare(password, user.password);
+
+    if (!passwordCheck) {
+      return res.status(400).send({ error: "Incorrect password" });
+    }
+
+    // Debugging: Check if JWT_SECRET is defined
+    console.log("JWT_SECRET:", ENV.JWT_SECRET);
+
+    // Ensure JWT_SECRET is not undefined
+    if (!ENV.JWT_SECRET) {
+      return res
+        .status(500)
+        .send({ error: "Internal server error. JWT secret is missing." });
+    }
+
+    // Create JWT
+    const token = Jwt.sign(
+      {
+        username: user.username,
+      },
+      ENV.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    return res.status(200).send({
+      msg: "Login Successful!",
+      username: user.username,
+      token,
+    });
   } catch (error) {
-    return res.status(500).send({ error });
+    return res.status(500).send({ error: error.message });
   }
 }
 
