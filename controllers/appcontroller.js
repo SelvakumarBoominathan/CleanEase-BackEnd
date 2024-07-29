@@ -18,44 +18,8 @@ export async function verifyUser(req, res, next) {
   }
 }
 
-// export async function register(req, res) {
-//   try {
-//     const { name, username, email, password } = req.body;
-//     console.log(name, username, email, password);
-
-//     // Check if username and email exist
-//     const [usernameCheck, emailCheck] = await Promise.all([
-//       UserModel.findOne({ username }).exec(),
-//       UserModel.findOne({ email }).exec(),
-//     ]);
-
-//     if (usernameCheck) {
-//       return res.status(400).send({ error: "username already exists" });
-//     }
-
-//     if (emailCheck) {
-//       return res.status(400).send({ error: "Email already exists" });
-//     }
-
-//     // Hash the password
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     // Create and save the new user
-//     const newUser = new UserModel({
-//       name,
-//       username,
-//       email,
-//       password: hashedPassword,
-//     });
-
-//     await newUser.save();
-
-//     return res.status(200).send({ msg: "User registered successfully." });
-//   } catch (error) {
-//     return res.status(500).send({ error: error.message });
-//   }
-// }
-
+// To register new user
+// http://localhost:8000/api/register
 export async function register(req, res) {
   try {
     const { name, username, email, password } = req.body;
@@ -95,7 +59,6 @@ export async function register(req, res) {
 
 // GET req to generate otp in user Obj
 // http://localhost:8000/api/generateOTP
-// Generate OTP
 export const generateOTP = async (req, res) => {
   const { username } = req.query;
   try {
@@ -147,7 +110,6 @@ export const registermail = async (req, res) => {
     };
 
     // Send mail
-
     try {
       const info = await transporter.sendMail(message);
       return res.status(201).json({
