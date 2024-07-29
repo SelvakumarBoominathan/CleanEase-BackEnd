@@ -10,6 +10,15 @@ dotenv.config();
 //creating server
 const app = express();
 
+// CORS configuration
+app.use(
+  cors({
+    origin: "http://localhost:8000", // allow all origins
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Specify which methods are allowed
+    credentials: true, // Enable cookies to be sent with requests
+  })
+);
+
 //middleware
 app.use(express.json());
 app.use(cors());
@@ -35,6 +44,9 @@ app.use("/api", router);
 connect()
   .then(() => {
     try {
+      app.listen(8000, "0.0.0.0", () => {
+        console.log("Server is listening on port 8000");
+      });
       app.listen(config.port, () => {
         console.log("server listening to the port : ", port);
       });
