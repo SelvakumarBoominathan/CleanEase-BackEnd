@@ -174,36 +174,33 @@ export async function login(req, res) {
   const { username, password } = req.body;
 
   try {
-    UserModel.findOne({ username })
-      .then((user) => {
-        bcrypt
-          .compare(password, user.password)
-          .then((passwordCheck) => {
-            if (!passwordCheck)
-              return res.status(400).send({ error: "Dont have Password" });
-            //Create JWT (JSON Web Token)
-            const token = Jwt.sign(
-              {
-                username: user.username,
-              },
-              ENV.JWT_SECRET,
-              { expiresIn: "24h" }
-            );
-            return res.status(200).send({
-              msg: "Login Successful..!",
-              username: user.username,
-              token,
-            });
-          })
-          .catch((error) => {
-            return res.status(400).send({ error: "Password does not match" });
-          });
-      })
-      .catch((error) => {
-        return res.status(404).send({ error: " username not found" });
-      });
+    const user = await UserModel.findOne({ username });
+    if (!user) {
+      return res.status(404).send({ error: "Username not found" });
+    }
+
+    const passwordCheck = await bcrypt.compare(password, user.password);
+    if (!passwordCheck) {
+      return res.status(400).send({ error: "Password does not match" });
+    }
+
+    // Create JWT (JSON Web Token)
+    const token = Jwt.sign(
+      {
+        username: user.username,
+      },
+      ENV.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    return res.status(200).send({
+      msg: "Login Successful!",
+      username: user.username,
+      token,
+    });
   } catch (error) {
-    return res.status(500).send({ error });
+    console.error("Login error:", error); // Log the error for debugging
+    return res.status(500).send({ error: "Internal Server Error" });
   }
 }
 
