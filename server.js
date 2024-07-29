@@ -13,8 +13,8 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: "http://localhost:8000", // allow all origins
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Specify which methods are allowed
+    origin: "http://localhost:5173", // allow front origin
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allow all api methods
     credentials: true, // Enable cookies to be sent with requests
   })
 );
