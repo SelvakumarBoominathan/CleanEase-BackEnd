@@ -106,7 +106,8 @@ export const registermail = async (req, res) => {
       from: `"CleanEase" <${ENV.Email}>`, // sender address
       to: email, // list of receivers
       subject: "OTP Verification", // Subject line
-      html: `<b>Your OTP is <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
+      // html: `<b>Your OTP is <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
+      html: `<b>Your OTP is <h1>${otpStore.auth_otp}</h1>!</b>`,
     };
 
     // Send mail
