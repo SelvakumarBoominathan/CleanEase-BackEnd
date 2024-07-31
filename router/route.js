@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as controller from "../controllers/appcontroller.js";
 // import * as mailer from "../controllers/mailer.js";
 import { localVariables } from "../middleware/auth.js";
+// import otpStore from "../middleware/auth.js";
 
 const router = Router();
 
@@ -21,9 +22,9 @@ router.route("/otpvalidation").post((req, res) => res.json("OTP route"));
 router.route("/user/:username").get(controller.getUser); // get the user details
 
 //First to verify user and then generate OTP. OTP variables will be generated using middleware
-router
-  .route("/generateOTP")
-  .get(controller.verifyUser, localVariables, controller.generateOTP); // to generate random OTP
+// router
+  // .route("/generateOTP")
+  // .get(controller.verifyUser, localVariables, controller.generateOTP); // to generate random OTP
 router.route("/verifyOTP").get(controller.verifyOTP); // verify generated OTP
 router.route("/ResetSession").get(controller.createResetSession); // creating session for pass update
 
