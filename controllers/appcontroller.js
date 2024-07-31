@@ -4,6 +4,7 @@ import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
 import otpGenerator from "otp-generator";
 import nodemailer from "nodemailer";
+import otpStore from "../middleware/auth.js";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
@@ -57,27 +58,6 @@ export async function register(req, res) {
   }
 }
 
-// GET req to generate otp in user Obj
-// http://localhost:8000/api/generateOTP
-export const generateOTP = async (req, res) => {
-  const { username } = req.query;
-  try {
-    const user = await UserModel.findOne({ username });
-    if (!user) return res.status(404).send({ error: "User not found" });
-
-    const otp = otpGenerator.generate(6, {
-      lowerCaseAlphabets: false,
-      upperCaseAlphabets: false,
-      specialChars: false,
-    });
-    req.app.locals.OTP = otp;
-
-    res.status(201).send({ code: otp });
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-};
-
 // Post request for signup email -  sending OTP to Gmail for mail verification
 // http://localhost:8000/api/registermail
 export const registermail = async (req, res) => {
@@ -88,6 +68,14 @@ export const registermail = async (req, res) => {
     const user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(404).send({ error: "Email not found" });
+    }
+
+    //access OTP from middleware
+
+    const otp = req.otp || otpStore.auth_otp;
+
+    if (!otp) {
+      return res.status(400).send({ error: "OTP is not generated" });
     }
 
     // Email configuration
@@ -107,12 +95,16 @@ export const registermail = async (req, res) => {
       to: email, // list of receivers
       subject: "OTP Verification", // Subject line
       // html: `<b>Your OTP is <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
-      html: `<b>Your OTP is <h1>${otpStore.auth_otp}</h1>!</b>`,
+      html: `<b>Your OTP is <h1>${otp}</h1>!</b>`,
     };
 
     // Send mail
     try {
       const info = await transporter.sendMail(message);
+
+      //reset OTP value
+      otpStore.auth_otp = null;
+
       return res.status(201).json({
         msg: "Mail Sent Successfully!",
         info: info.messageId,
@@ -166,51 +158,6 @@ export async function login(req, res) {
     return res.status(500).send({ error: "Internal Server Error" });
   }
 }
-
-// export async function login(req, res) {
-//   const { username, password } = req.body;
-
-//   try {
-//     const user = await UserModel.findOne({ username });
-
-//     if (!user) {
-//       return res.status(404).send({ error: "Username not found" });
-//     }
-
-//     const passwordCheck = await bcrypt.compare(password, user.password);
-
-//     if (!passwordCheck) {
-//       return res.status(400).send({ error: "Incorrect password" });
-//     }
-
-//     // Debugging: Check if JWT_SECRET is defined
-//     console.log("JWT_SECRET:", ENV.JWT_SECRET);
-
-//     // Ensure JWT_SECRET is not undefined
-//     if (!ENV.JWT_SECRET) {
-//       return res
-//         .status(500)
-//         .send({ error: "Internal server error. JWT secret is missing." });
-//     }
-
-//     // Create JWT
-//     const token = Jwt.sign(
-//       {
-//         username: user.username,
-//       },
-//       ENV.JWT_SECRET,
-//       { expiresIn: "24h" }
-//     );
-
-//     return res.status(200).send({
-//       msg: "Login Successful!",
-//       username: user.username,
-//       token,
-//     });
-//   } catch (error) {
-//     return res.status(500).send({ error: error.message });
-//   }
-// }
 
 // GET req to login
 // http://localhost:8000/api/user/:username
@@ -284,3 +231,68 @@ export async function resetPassword(req, res) {
     return res.status(500).send({ error: error.message });
   }
 }
+// export async function login(req, res) {
+//   const { username, password } = req.body;
+
+//   try {
+//     const user = await UserModel.findOne({ username });
+
+//     if (!user) {
+//       return res.status(404).send({ error: "Username not found" });
+//     }
+
+//     const passwordCheck = await bcrypt.compare(password, user.password);
+
+//     if (!passwordCheck) {
+//       return res.status(400).send({ error: "Incorrect password" });
+//     }
+
+//     // Debugging: Check if JWT_SECRET is defined
+//     console.log("JWT_SECRET:", ENV.JWT_SECRET);
+
+//     // Ensure JWT_SECRET is not undefined
+//     if (!ENV.JWT_SECRET) {
+//       return res
+//         .status(500)
+//         .send({ error: "Internal server error. JWT secret is missing." });
+//     }
+
+//     // Create JWT
+//     const token = Jwt.sign(
+//       {
+//         username: user.username,
+//       },
+//       ENV.JWT_SECRET,
+//       { expiresIn: "24h" }
+//     );
+
+//     return res.status(200).send({
+//       msg: "Login Successful!",
+//       username: user.username,
+//       token,
+//     });
+//   } catch (error) {
+//     return res.status(500).send({ error: error.message });
+//   }
+// }
+
+// // GET req to generate otp in user Obj
+// // http://localhost:8000/api/generateOTP
+// export const generateOTP = async (req, res) => {
+//   const { username } = req.query;
+//   try {
+//     const user = await UserModel.findOne({ username });
+//     if (!user) return res.status(404).send({ error: "User not found" });
+
+//     const otp = otpGenerator.generate(6, {
+//       lowerCaseAlphabets: false,
+//       upperCaseAlphabets: false,
+//       specialChars: false,
+//     });
+//     req.app.locals.OTP = otp;
+
+//     res.status(201).send({ code: otp });
+//   } catch (error) {
+//     res.status(500).send({ error: error.message });
+//   }
+// };

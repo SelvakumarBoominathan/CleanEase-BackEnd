@@ -1,4 +1,3 @@
-import otpGenerator from "otp-generator";
 // import { generateOTP } from "../controllers/appcontroller";
 
 // In-memory store for OTPs
@@ -13,10 +12,10 @@ import otpGenerator from "otp-generator";
 //   }
 //   next();
 // }
+import otpGenerator from "otp-generator";
+const otpStore = { auth_otp: null };
 
 export async function localVariables(req, res, next) {
-  const otpStore = { auth_otp: null };
-
   try {
     const otp = otpGenerator.generate(6, {
       lowerCaseAlphabets: false,
@@ -25,7 +24,7 @@ export async function localVariables(req, res, next) {
     });
 
     // Store OTP in memory
-    otpStore[auth_otp] = otp;
+    otpStore.auth_otp = otp;
 
     req.otp = otp;
     next();
@@ -33,3 +32,5 @@ export async function localVariables(req, res, next) {
     res.status(500).send({ error: error.message });
   }
 }
+console.log(otpStore.auth_otp);
+export default otpStore;
