@@ -2,7 +2,6 @@ import UserModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
-import otpGenerator from "otp-generator";
 import nodemailer from "nodemailer";
 import otpStore from "../middleware/auth.js";
 
@@ -71,7 +70,6 @@ export const registermail = async (req, res) => {
     }
 
     //access OTP from middleware
-
     const otp = req.otp || otpStore.auth_otp;
 
     if (!otp) {
@@ -94,16 +92,12 @@ export const registermail = async (req, res) => {
       from: `"CleanEase" <${ENV.Email}>`, // sender address
       to: email, // list of receivers
       subject: "OTP Verification", // Subject line
-      // html: `<b>Your OTP is <h1>${req.app.locals.OTP}</h1>!</b>`, // html body
-      html: `<b>Your OTP is <h1>${otp}</h1>!</b>`,
+      html: `<b>Your OTP is <h1>${otp}</h1></b>`, //html body
     };
 
     // Send mail
     try {
       const info = await transporter.sendMail(message);
-
-      //reset OTP value
-      otpStore.auth_otp = null;
 
       return res.status(201).json({
         msg: "Mail Sent Successfully!",
@@ -117,6 +111,29 @@ export const registermail = async (req, res) => {
     return res.status(500).send({ error: error.message });
   }
 };
+
+// GET req to verifyOTP otp in user Obj
+// http://localhost:8000/api/verifyOTP
+export async function verifyOTP(req, res) {
+  const { otp } = req.body;
+
+  const storedOTP = otpStore.auth_otp;
+  const receivedOtp = String(otp);
+
+  if (!storedOTP) {
+    return res.status(400).send({ error: "OTP not generated." });
+  }
+
+  //Comparing the OTP from req and stored variable in middleware
+  if (storedOTP === receivedOtp) {
+    //reset OTP value
+    otpStore.auth_otp = null;
+    req.app.locals.resetSession = true;
+
+    return res.status(201).send({ msg: "OTP verified!" });
+  }
+  return res.status(400).send({ error: "Invalid OTP." });
+}
 
 // http://localhost:8000/api/getbill
 export async function getbill(req, res) {
@@ -176,21 +193,6 @@ export async function getUser(req, res) {
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
-}
-
-// GET req to verifyOTP otp in user Obj
-// http://localhost:8000/api/verifyOTP
-export async function verifyOTP(req, res) {
-  const { code } = req.query;
-
-  //Comparing the OTP from req and stored variable in middleware
-  if (parseInt(req.app.locals.OTP) === parseInt(code)) {
-    //resettingthe OTP and session values in the middleware
-    req.app.locals.OTP = null;
-    req.app.locals.resetSession = true;
-    return res.status(201).send({ msg: "OTP verified!" });
-  }
-  return res.status(400).send({ error: "Invalid OTP." });
 }
 
 // GET method for creating resetsession
