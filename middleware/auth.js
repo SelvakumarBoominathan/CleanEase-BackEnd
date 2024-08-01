@@ -1,17 +1,4 @@
-// import { generateOTP } from "../controllers/appcontroller";
-
-// In-memory store for OTPs
-
-// export function localVariables(req, res, next) {
-//   //middleware to create variable when generate otp triggered
-//   if (!req.app.locals.OTP) {
-//     req.app.locals = {
-//       OTP: null,
-//       resetSession: false,
-//     };
-//   }
-//   next();
-// }
+// generate OTP
 import otpGenerator from "otp-generator";
 const otpStore = { auth_otp: null };
 
