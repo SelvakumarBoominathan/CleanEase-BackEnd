@@ -15,7 +15,11 @@ router.route("/otpvalidation").post(controller.verifyOTP);
 // Update or PATCH method
 router
   .route("/resetPassword")
-  .patch(controller.verifyUser, controller.resetPassword); // reset password
+  .patch(
+    controller.verifyUser,
+    controller.createResetSession,
+    controller.resetPassword
+  ); // reset password
 
 router
   .route("/authenticate")

@@ -18,6 +18,42 @@ export async function verifyUser(req, res, next) {
   }
 }
 
+// POST req to login
+// http://localhost:8000/api/login
+export async function login(req, res) {
+  const { username, password } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ username });
+    if (!user) {
+      return res.status(404).send({ error: "Username not found" });
+    }
+
+    const passwordCheck = await bcrypt.compare(password, user.password);
+    if (!passwordCheck) {
+      return res.status(400).send({ error: "Password does not match" });
+    }
+
+    // Create JWT (JSON Web Token)
+    const token = Jwt.sign(
+      {
+        username: user.username,
+      },
+      ENV.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    return res.status(200).send({
+      msg: "Login Successful!",
+      username: user.username,
+      token,
+    });
+  } catch (error) {
+    console.error("Login error:", error); // Log the error for debugging
+    return res.status(500).send({ error: "Internal Server Error" });
+  }
+}
+
 // To register new user
 // http://localhost:8000/api/register
 export async function register(req, res) {
@@ -135,46 +171,7 @@ export async function verifyOTP(req, res) {
   return res.status(400).send({ error: "Invalid OTP." });
 }
 
-// http://localhost:8000/api/getbill
-export async function getbill(req, res) {
-  return res.status(201).send({ msg: "Get bill successfully!" });
-}
 
-// POST req to login
-// http://localhost:8000/api/login
-export async function login(req, res) {
-  const { username, password } = req.body;
-
-  try {
-    const user = await UserModel.findOne({ username });
-    if (!user) {
-      return res.status(404).send({ error: "Username not found" });
-    }
-
-    const passwordCheck = await bcrypt.compare(password, user.password);
-    if (!passwordCheck) {
-      return res.status(400).send({ error: "Password does not match" });
-    }
-
-    // Create JWT (JSON Web Token)
-    const token = Jwt.sign(
-      {
-        username: user.username,
-      },
-      ENV.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
-    return res.status(200).send({
-      msg: "Login Successful!",
-      username: user.username,
-      token,
-    });
-  } catch (error) {
-    console.error("Login error:", error); // Log the error for debugging
-    return res.status(500).send({ error: "Internal Server Error" });
-  }
-}
 
 // GET req to login
 // http://localhost:8000/api/user/:username
@@ -232,6 +229,11 @@ export async function resetPassword(req, res) {
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
+}
+
+// http://localhost:8000/api/getbill
+export async function getbill(req, res) {
+  return res.status(201).send({ msg: "Get bill successfully!" });
 }
 // export async function login(req, res) {
 //   const { username, password } = req.body;
