@@ -11,7 +11,8 @@ export async function verifyUser(req, res, next) {
     const { username } = req.method === "GET" ? req.query : req.body;
 
     const exist = await UserModel.findOne({ username });
-    if (!exist) return res.status(404).send({ error: "User not Exist" });
+    if (!exist)
+      return res.status(404).send({ error: `User ${username} not Exist` });
     next();
   } catch (error) {
     return res.status(500).send({ error: "Authentication Error" });
@@ -170,8 +171,6 @@ export async function verifyOTP(req, res) {
   }
   return res.status(400).send({ error: "Invalid OTP." });
 }
-
-
 
 // GET req to login
 // http://localhost:8000/api/user/:username
