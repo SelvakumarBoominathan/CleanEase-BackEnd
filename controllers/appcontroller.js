@@ -211,6 +211,7 @@ export async function resetPassword(req, res) {
 
     // Find user by username
     const user = await UserModel.findOne({ username });
+    console.log(user);
     if (!user) {
       return res.status(404).send({ error: "username not found" });
     }
