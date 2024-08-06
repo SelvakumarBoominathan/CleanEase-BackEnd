@@ -166,6 +166,7 @@ export async function verifyOTP(req, res) {
     //reset OTP value
     otpStore.auth_otp = null;
     req.app.locals.resetSession = true;
+    console.log(req.app.locals.resetSession);
 
     return res.status(201).send({ msg: "OTP verified!" });
   }
@@ -193,20 +194,19 @@ export async function getUser(req, res) {
 
 // GET method for creating resetsession
 // http://localhost:8000/api/createResetSession
-export async function createResetSession(req, res) {
+export async function createResetSession(req, res, next) {
+  console.log(req.app.locals.resetSession);
   if (req.app.locals.resetSession) {
     req.app.locals.resetSession = false; // this will create a reset session only once
-    return res.status(201).send({ msg: "Access granted" });
+    // return res.status(201).send({ msg: "Access granted" });
+    next();
+  } else {
+    return res.status(440).send({ error: "Session expired!" });
   }
-  return res.status(440).send({ error: "Session expired!" });
 }
 
 export async function resetPassword(req, res) {
   try {
-    if (!req.app.locals.resetSession) {
-      return res.status(440).send({ error: "Session expired!" });
-    }
-
     const { username, password } = req.body;
 
     // Find user by username
