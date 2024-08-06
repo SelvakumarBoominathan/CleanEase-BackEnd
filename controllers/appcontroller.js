@@ -137,6 +137,7 @@ export const registermail = async (req, res) => {
       const info = await transporter.sendMail(message);
 
       return res.status(201).json({
+        user: user.username,
         msg: "Mail Sent Successfully!",
         info: info.messageId,
         preview: nodemailer.getTestMessageUrl(info),
