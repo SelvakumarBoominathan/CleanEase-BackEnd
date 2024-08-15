@@ -1,4 +1,5 @@
 import UserModel from "../models/userModel.js";
+import EmployeeModel from "../models/employeeModel.js";
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
@@ -236,6 +237,7 @@ export async function resetPassword(req, res) {
 export async function getbill(req, res) {
   return res.status(201).send({ msg: "Get bill successfully!" });
 }
+
 // export async function login(req, res) {
 //   const { username, password } = req.body;
 
@@ -301,3 +303,24 @@ export async function getbill(req, res) {
 //     res.status(500).send({ error: error.message });
 //   }
 // };
+
+//EMPLOYEE APIs
+
+export const addemployee = async (req, res) => {
+  try {
+    const newEmp = new EmployeeModel(req.body);
+    await newEmp.save();
+    res.status(201).json(newEmp);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const getEmployees = async (req, res) => {
+  try {
+    const employees = await EmployeeModel.find({});
+    res.status(200).json(employees);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};

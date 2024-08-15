@@ -42,7 +42,6 @@ app.get("/", (req, res) => {
 app.use("/api", router);
 
 //server listener only if there is valid Mongo connection established
-
 connect()
   .then(() => {
     try {
