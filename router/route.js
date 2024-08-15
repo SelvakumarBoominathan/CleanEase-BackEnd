@@ -41,6 +41,7 @@ router.route("/ResetSession").get(controller.createResetSession); // creating se
 
 // router.route("/Registerpage").delete((req, res) => res.json("register route"));
 
-router.route("/employees").post(controller.addemployee);
+// APIs for EMPLOYEES
+router.route("/addemployee").post(controller.addemployee);
 router.route("/employees").get(controller.getEmployees);
 export default router;
