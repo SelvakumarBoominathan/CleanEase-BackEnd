@@ -324,3 +324,18 @@ export const getEmployees = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const deleteEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await EmployeeModel.deleteOne({ id: parseInt(id, 10) });
+
+    if (result.deletedCount === 1) {
+      res.status(200).json({ message: "Employee deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Employee not found" });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
