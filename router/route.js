@@ -45,5 +45,6 @@ router.route("/ResetSession").get(controller.createResetSession); // creating se
 router.route("/addemployee").post(controller.addemployee);
 router.route("/employees").get(controller.getEmployees);
 router.route("/deleteEmployee/:id").delete(controller.deleteEmployee);
+router.route("/updateEmployee/:id").put(controller.updateEmployee);
 
 export default router;
