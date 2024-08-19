@@ -339,3 +339,24 @@ export const deleteEmployee = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const updateEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+   
+    const result = await EmployeeModel.findOneAndUpdate(
+      { id: parseInt(id, 10) },
+      req.body,
+      {
+        new: true,
+      }
+    );
+
+    if (!result) return res.status(404).send("Employee not found");
+
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
