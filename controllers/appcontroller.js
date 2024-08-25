@@ -343,8 +343,7 @@ export const deleteEmployee = async (req, res) => {
 export const updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
-    
-   
+
     const result = await EmployeeModel.findOneAndUpdate(
       { id: parseInt(id, 10) },
       req.body,
