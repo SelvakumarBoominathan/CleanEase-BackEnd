@@ -31,6 +31,16 @@ const employeeSchema = new mongoose.Schema({
     required: [true, "Please provide number"],
     min: 0,
   },
+  rating: {
+    average: {
+      type: Number,
+      default: 0,
+    },
+    count: {
+      type: Number,
+      default: 0,
+    },
+  },
 });
 
 export default mongoose.model.employee ||
