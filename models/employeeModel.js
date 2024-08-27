@@ -1,5 +1,11 @@
 import mongoose from "mongoose";
 
+// Define the review schema
+const reviewSchema = new mongoose.Schema({
+  name: { type: String, default: "" },
+  comments: { type: String, default: "" },
+});
+
 const employeeSchema = new mongoose.Schema({
   image: {
     type: String,
@@ -34,12 +40,18 @@ const employeeSchema = new mongoose.Schema({
   rating: {
     average: {
       type: Number,
+      required: [false, "Please provide number"],
       default: 0,
     },
     count: {
       type: Number,
+      required: [false, "Please provide number"],
       default: 0,
     },
+  },
+  review: {
+    type: [reviewSchema], // Array of review objects
+    default: [], // Default is an empty array
   },
 });
 
