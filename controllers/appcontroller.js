@@ -359,3 +359,8 @@ export const updateEmployee = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const addrating = async (req, res) => {
+  try {
+  } catch (error) {}
+};
