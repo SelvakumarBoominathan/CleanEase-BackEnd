@@ -364,6 +364,44 @@ export const addrating = async (req, res) => {
   try {
     const { rating, reviewtext, username, empID } = req.body;
 
-    
-  } catch (error) {}
+    const employee = await EmployeeModel.findOne({
+      id: parseInt(empID, 10),
+    });
+    if (!employee) {
+      return res.status(404).send("Employee not found!");
+    }
+
+    //calculating new Average
+
+    const currentAvg = employee.rating.average;
+    const currentCount = employee.rating.count;
+
+    const newCount = currentCount + 1;
+    const newAvg = (currentAvg * currentCount + rating) / newCount;
+
+    //new review object
+
+    const newReview = {
+      name: username,
+      comments: reviewtext,
+    };
+
+    const result = await EmployeeModel.findOneAndUpdate(
+      { id: parseInt(id, 10) },
+      {
+        $set: {
+          "rating.average": newAvg,
+          "rating.count": newCount,
+        },
+        $push: {
+          review: newReview,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).send("Error updating employee rating and review");
+  }
 };
