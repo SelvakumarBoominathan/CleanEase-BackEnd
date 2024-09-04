@@ -363,5 +363,7 @@ export const updateEmployee = async (req, res) => {
 export const addrating = async (req, res) => {
   try {
     const { rating, reviewtext, username, empID } = req.body;
+
+    
   } catch (error) {}
 };
