@@ -370,6 +370,14 @@ export const addrating = async (req, res) => {
       return res.status(404).send("Employee not found!");
     }
 
+    const userExist = await EmployeeModel.findOne({
+      "review.name": username,
+    });
+
+    if (userExist) {
+      return res.status(409).send("You have already provided your review");
+    }
+
     // Calculate the new average
     const currentAvg = employee.rating.average;
     const currentCount = employee.rating.count;
