@@ -6,54 +6,60 @@ const reviewSchema = new mongoose.Schema({
   comments: { type: String, default: "" },
 });
 
-const employeeSchema = new mongoose.Schema({
-  image: {
-    type: String,
-    required: [true, "Please provide image URL"],
-    trim: true,
-  },
-  name: {
-    type: String,
-    required: [true, "Please provide name"],
-    trim: true,
-  },
-  category: {
-    type: String,
-    required: [true, "Please provide category"],
-    trim: true,
-  },
-  city: {
-    type: String,
-    required: [true, "Please provide city"],
-    trim: true,
-  },
-  id: {
-    type: Number,
-    required: [true, "Please provide id"],
-    trim: true,
-  },
-  price: {
-    type: Number,
-    required: [true, "Please provide number"],
-    min: 0,
-  },
-  rating: {
-    average: {
-      type: Number,
-      required: [false, "Please provide number"],
-      default: 0,
+const employeeSchema = new mongoose.Schema(
+  {
+    image: {
+      type: String,
+      required: [true, "Please provide image URL"],
+      trim: true,
     },
-    count: {
-      type: Number,
-      required: [false, "Please provide number"],
-      default: 0,
+    name: {
+      type: String,
+      required: [true, "Please provide name"],
+      trim: true,
     },
+    category: {
+      type: String,
+      required: [true, "Please provide category"],
+      trim: true,
+    },
+    city: {
+      type: String,
+      required: [true, "Please provide city"],
+      trim: true,
+    },
+    id: {
+      type: Number,
+      required: [true, "Please provide id"],
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: [true, "Please provide number"],
+      min: 0,
+    },
+    rating: {
+      average: {
+        type: Number,
+        required: [false, "Please provide number"],
+        default: 0,
+      },
+      count: {
+        type: Number,
+        required: [false, "Please provide number"],
+        default: 0,
+      },
+    },
+    review: {
+      type: [reviewSchema], // Array of review objects
+      default: [], // Default is an empty array
+    },
+    bookings: [],
   },
-  review: {
-    type: [reviewSchema], // Array of review objects
-    default: [], // Default is an empty array
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 export default mongoose.model.employee ||
   mongoose.model("employee", employeeSchema);
