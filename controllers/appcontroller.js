@@ -259,6 +259,29 @@ export const getEmployees = async (req, res) => {
   }
 };
 
+// API to fetch employee by ID - get single employee
+export const getSingleEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Convert the id to a number
+    const employeeId = Number(id);
+
+    if (isNaN(employeeId)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+
+    const employee = await EmployeeModel.findOne({ id: employeeId });
+
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    res.json(employee);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export const deleteEmployee = async (req, res) => {
   try {
     const { id } = req.params;
