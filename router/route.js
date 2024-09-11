@@ -46,8 +46,8 @@ router.route("/addemployee").post(controller.addemployee);
 router.route("/employees").get(controller.getEmployees);
 router.route("/deleteEmployee/:id").delete(controller.deleteEmployee);
 router.route("/updateEmployee/:id").put(controller.updateEmployee);
-
+router.route("/employees/:id").get(controller.getSingleEmployee);
 //APIs for Review and Rating
-router.route("/rating").post(controller.addrating)
+router.route("/rating").post(controller.addrating);
 
 export default router;
