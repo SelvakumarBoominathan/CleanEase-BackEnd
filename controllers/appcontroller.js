@@ -5,6 +5,7 @@ import Jwt from "jsonwebtoken";
 import ENV from "../config.js";
 import nodemailer from "nodemailer";
 import otpStore from "../middleware/auth.js";
+import userModel from "../models/userModel.js";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
@@ -376,9 +377,45 @@ export const addrating = async (req, res) => {
   }
 };
 
-
 //update booking details to employee modal
 
-export const addBooking = async(req, res) => {
+export const addBooking = async (req, res) => {
+  try {
+    const { employeeId, username, date, time } = req.body;
 
-}
+    // Find the employee by employeeId
+    const employee = await EmployeeModel.findById(employeeId);
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found." });
+    }
+
+    // Find the user by userId
+    const user = await userModel.findOne(username);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Create the booking object
+    const bookingDetails = {
+      employeeName: employee.name,
+      employeeImage: employee.image,
+      city: employee.city,
+      date: new Date(date),
+      time,
+      bookedBy: username,
+    };
+
+    //Add booking details to employees booking array.
+    employee.bookings.push(bookingDetails);
+    await employee.save();
+
+    //add booking details to user bookings
+    user.bookings.push(bookingDetails);
+    await user.save();
+
+    return res.statys(201).json({ message: "Booking created successfully!" });
+  } catch (error) {
+    console.error("Error in creating booking : ", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
