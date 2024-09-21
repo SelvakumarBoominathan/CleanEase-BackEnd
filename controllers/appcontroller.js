@@ -375,3 +375,10 @@ export const addrating = async (req, res) => {
     res.status(500).send("Error updating employee rating and review");
   }
 };
+
+
+//update booking details to employee modal
+
+export const addBooking = async(req, res) => {
+
+}
