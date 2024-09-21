@@ -1,5 +1,14 @@
 import mongoose from "mongoose";
 
+const bookingSchema = new mongoose.Schema({
+  employeeName: String,
+  employeeImage: String,
+  city: String,
+  date: Date,
+  time: String,
+  bookedBy: String,
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -18,6 +27,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide a strong password"],
+  },
+  bookings: {
+    type: [bookingSchema],
+    default: [],
   },
 });
 

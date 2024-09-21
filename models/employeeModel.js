@@ -6,6 +6,15 @@ const reviewSchema = new mongoose.Schema({
   comments: { type: String, default: "" },
 });
 
+const bookingSchema = new mongoose.Schema({
+  employeeName: String,
+  employeeImage: String,
+  city: String,
+  date: Date,
+  time: String,
+  bookedBy: String, // This could be a user ID or any identifier
+});
+
 const employeeSchema = new mongoose.Schema(
   {
     image: {
@@ -54,7 +63,10 @@ const employeeSchema = new mongoose.Schema(
       type: [reviewSchema], // Array of review objects
       default: [], // Default is an empty array
     },
-    bookings: [],
+    bookings: {
+      type: [bookingSchema],
+      default: [],
+    },
   },
   {
     timestamps: true,
