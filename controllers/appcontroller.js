@@ -378,19 +378,19 @@ export const addrating = async (req, res) => {
 };
 
 //update booking details to employee modal
-
 export const addBooking = async (req, res) => {
   try {
-    const { employeeId, username, date, time } = req.body;
+    const { employeeId, username, time, date } = req.body;
 
+    const numericEmpID = parseInt(employeeId, 10);
     // Find the employee by employeeId
-    const employee = await EmployeeModel.findById(employeeId);
+    const employee = await EmployeeModel.findOne({ id: numericEmpID });
     if (!employee) {
       return res.status(404).json({ message: "Employee not found." });
     }
 
     // Find the user by userId
-    const user = await userModel.findOne(username);
+    const user = await userModel.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
@@ -413,9 +413,11 @@ export const addBooking = async (req, res) => {
     user.bookings.push(bookingDetails);
     await user.save();
 
-    return res.statys(201).json({ message: "Booking created successfully!" });
+    return res.status(201).json({ message: "Booking created successfully!" });
   } catch (error) {
     console.error("Error in creating booking : ", error);
-    return res.status(500).json({ message: "Internal server error." });
+    return res
+      .status(500)
+      .json({ message: "Internal server error.", error: error.message });
   }
 };
