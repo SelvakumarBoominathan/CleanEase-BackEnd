@@ -6,7 +6,7 @@ import ENV from "../config.js";
 import nodemailer from "nodemailer";
 import otpStore from "../middleware/auth.js";
 import userModel from "../models/userModel.js";
-import checklistModal from "../models/checkListModel.js";
+import checklist from "../models/checkListModel.js";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
@@ -286,9 +286,15 @@ export const getSingleEmployee = async (req, res) => {
 
 export const getChecklistOfService = async (req, res) => {
   try {
-    const { service } = req.data;
+    const { service } = req.body;
 
-    const checklistSchema = await checklistModal.findOne({ service });
+    if (!service) {
+      return res
+        .status(400)
+        .json({ message: "Service is required in the request body" });
+    }
+
+    const checklistSchema = await checklist.findOne({ service });
 
     if (!checklistSchema) {
       return res
@@ -296,11 +302,14 @@ export const getChecklistOfService = async (req, res) => {
         .json({ message: "Checklist Schema for the category is not exist." });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       checkPoints: checklistSchema.checkPoints,
       additionalCheckpoints: checklistSchema.additionalCheckpoints,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error fetching checklist : ", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
 };
 
 export const deleteEmployee = async (req, res) => {
