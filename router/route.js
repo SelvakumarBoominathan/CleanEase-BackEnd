@@ -50,6 +50,6 @@ router.route("/employees/:id").get(controller.getSingleEmployee);
 //APIs for Review and Rating
 router.route("/rating").post(controller.addrating);
 router.route("/booking").post(controller.addBooking);
-router.route("/checklist").get(controller.getChecklistOfService)
+router.route("/checklist").post(controller.getChecklistOfService);
 
 export default router;
