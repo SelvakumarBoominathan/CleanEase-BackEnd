@@ -289,9 +289,7 @@ export const getChecklistOfService = async (req, res) => {
     const { service } = req.body;
 
     if (!service) {
-      return res
-        .status(400)
-        .json({ message: "Service is required in the request body" });
+      return res.status(400).json({ message: "Service is not specified." });
     }
 
     const checklistSchema = await checklist.findOne({ service });
