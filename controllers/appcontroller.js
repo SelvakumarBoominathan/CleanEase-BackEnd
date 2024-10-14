@@ -6,7 +6,6 @@ import ENV from "../config.js";
 import nodemailer from "nodemailer";
 import otpStore from "../middleware/auth.js";
 import userModel from "../models/userModel.js";
-import checklist from "../models/checkListModel.js";
 
 //middlewere to find user while loging in
 export async function verifyUser(req, res, next) {
@@ -283,7 +282,6 @@ export const getSingleEmployee = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 export const deleteEmployee = async (req, res) => {
   try {
