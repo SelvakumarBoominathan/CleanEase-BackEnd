@@ -284,31 +284,6 @@ export const getSingleEmployee = async (req, res) => {
   }
 };
 
-export const getChecklistOfService = async (req, res) => {
-  try {
-    const { service } = req.body;
-
-    if (!service) {
-      return res.status(400).json({ message: "Service is not specified." });
-    }
-
-    const checklistSchema = await checklist.findOne({ service });
-
-    if (!checklistSchema) {
-      return res
-        .status(404)
-        .json({ message: "Checklist Schema for the category is not exist." });
-    }
-
-    return res.status(200).json({
-      checkPoints: checklistSchema.checkPoints,
-      additionalCheckpoints: checklistSchema.additionalCheckpoints,
-    });
-  } catch (error) {
-    console.error("Error fetching checklist : ", error);
-    return res.status(500).json({ message: "Internal server error." });
-  }
-};
 
 export const deleteEmployee = async (req, res) => {
   try {
