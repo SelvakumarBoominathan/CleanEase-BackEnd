@@ -421,3 +421,18 @@ export const addBooking = async (req, res) => {
       .json({ message: "Internal server error.", error: error.message });
   }
 };
+
+//get booking details from the cart page
+
+export const getbookings = async (req, res) => {
+  try {
+    const { username } = req.body;
+    const user = await userModel
+      .findOne({ username: username })
+      .select("bookings");
+    if (!user) return res.status(404).json({ message: "user not found" });
+    res.json({ bookings: user.bookings });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching bookings!", error });
+  }
+};
