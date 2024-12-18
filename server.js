@@ -14,8 +14,8 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: "http://localhost:5173", // allow front origin
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allow all api methods
+    origin: "http://localhost:5173", // allow frontend origin requests
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // Allow all api methods from FE origin
     credentials: true, // Enable cookies to be sent with requests
   })
 );
