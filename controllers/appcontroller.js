@@ -437,12 +437,29 @@ export const addBooking = async (req, res) => {
 //   }
 // };
 
+// export const login = async (req, res) => {
+//   const { username, password } = req.body;
+
+//   // Validate user (replace with actual DB check)
+//   const user = await userModel.findOne({ username });
+//   if (!user || user.password !== password) {
+//     return res.status(401).json({ message: "Invalid username or password" });
+//   }
+
+//   // Generate JWT
+//   const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
+//     expiresIn: "1h",
+//   });
+
+//   res.json({ token });
+// };
+
 export const getbookings = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Unauthorized" });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = Jwt.verify(token, process.env.JWT_SECRET);
     const username = decoded.username;
 
     const user = await userModel.findOne({ username }).select("bookings");
