@@ -424,13 +424,30 @@ export const addBooking = async (req, res) => {
 
 //get booking details from the cart page
 
+// export const getbookings = async (req, res) => {
+//   try {
+//     const { username } = req.body;
+//     const user = await userModel
+//       .findOne({ username: username })
+//       .select("bookings");
+//     if (!user) return res.status(404).json({ message: "user not found" });
+//     res.json({ bookings: user.bookings });
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching bookings!", error });
+//   }
+// };
+
 export const getbookings = async (req, res) => {
   try {
-    const { username } = req.body;
-    const user = await userModel
-      .findOne({ username: username })
-      .select("bookings");
-    if (!user) return res.status(404).json({ message: "user not found" });
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const username = decoded.username;
+
+    const user = await userModel.findOne({ username }).select("bookings");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
     res.json({ bookings: user.bookings });
   } catch (error) {
     res.status(500).json({ message: "Error fetching bookings!", error });
