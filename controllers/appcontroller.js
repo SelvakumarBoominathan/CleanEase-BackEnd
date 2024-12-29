@@ -422,38 +422,6 @@ export const addBooking = async (req, res) => {
   }
 };
 
-//get booking details from the cart page
-
-// export const getbookings = async (req, res) => {
-//   try {
-//     const { username } = req.body;
-//     const user = await userModel
-//       .findOne({ username: username })
-//       .select("bookings");
-//     if (!user) return res.status(404).json({ message: "user not found" });
-//     res.json({ bookings: user.bookings });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error fetching bookings!", error });
-//   }
-// };
-
-// export const login = async (req, res) => {
-//   const { username, password } = req.body;
-
-//   // Validate user (replace with actual DB check)
-//   const user = await userModel.findOne({ username });
-//   if (!user || user.password !== password) {
-//     return res.status(401).json({ message: "Invalid username or password" });
-//   }
-
-//   // Generate JWT
-//   const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {
-//     expiresIn: "1h",
-//   });
-
-//   res.json({ token });
-// };
-
 export const getbookings = async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
@@ -468,5 +436,52 @@ export const getbookings = async (req, res) => {
     res.json({ bookings: user.bookings });
   } catch (error) {
     res.status(500).json({ message: "Error fetching bookings!", error });
+  }
+
+  // try {
+  //   const { id } = req.params;
+  //   const token = req.headers.authorization?.split(" ")[1];
+  //   if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+  //   const decoded = Jwt.verify(token, process.env.JWT_SECRET);
+  //   const username = decoded.username;
+
+  //   const user = await userModel.findOne({ username });
+  //   if (!user) return res.status(404).json({ message: "User not found" });
+
+  //   user.bookings = user.bookings.filter(
+  //     (booking) => booking._id.toString() !== id
+  //   );
+  //   await user.save();
+
+  //   res.json({ message: "Booking removed successfully" });
+  // } catch (error) {
+  //   res.status(500).json({ message: "Error removing booking!", error });
+  // }
+};
+
+export const removeBooking = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+    const decoded = Jwt.verify(token, process.env.JWT_SECRET);
+    const username = decoded.username;
+    const { bookingId } = req.body;
+
+    const user = await userModel.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Remove the booking with the specified ID
+    const updatedBookings = user.bookings.filter(
+      (booking) => booking._id.toString() !== bookingId
+    );
+
+    user.bookings = updatedBookings;
+    await user.save();
+
+    res.json({ message: "Booking removed successfully!" });
+  } catch (error) {
+    res.status(500).json({ message: "Error removing booking!", error });
   }
 };

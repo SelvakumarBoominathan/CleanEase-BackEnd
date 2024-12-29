@@ -50,5 +50,6 @@ router.route("/employees/:id").get(controller.getSingleEmployee);
 //APIs for Review and Rating
 router.route("/rating").post(controller.addrating);
 router.route("/booking").post(controller.addBooking);
-router.route("/Cartpage").post(controller.getbookings);
+router.route("/Cartpage").get(controller.getbookings);
+router.route("/removeBooking").delete(controller.removeBooking);
 export default router;
