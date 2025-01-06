@@ -147,10 +147,6 @@ We welcome contributions to improve the platform. To contribute:
 
 ## **License**
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+N/A
 
 ---
-
-## **Contact**
-
-For any questions or issues, please contact [Your Name/Email] or raise an issue in the repository.
