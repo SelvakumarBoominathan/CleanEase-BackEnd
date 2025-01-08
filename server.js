@@ -43,19 +43,34 @@ app.get("/", (req, res) => {
 app.use("/api", router);
 
 //server listener only if there is valid Mongo connection established
+// connect()
+//   .then(() => {
+//     try {
+//       app.listen(8000, "0.0.0.0", () => {
+//         console.log("Server is listening on port 8000");
+//       });
+//       app.listen(config.port, () => {
+//         console.log("server listening to the port : ", port);
+//       });
+//     } catch (error) {
+//       console.log("Cannot connect to the server");
+//     }
+//   })
+//   .catch((error) => {
+//     console.log("Invalid database connection!");
+//   });
+
 connect()
   .then(() => {
     try {
-      app.listen(8000, "0.0.0.0", () => {
-        console.log("Server is listening on port 8000");
-      });
-      app.listen(config.port, () => {
-        console.log("server listening to the port : ", port);
+      // Assuming `config.port` contains the correct port value
+      app.listen(config.port || 8000, "0.0.0.0", () => {
+        console.log(`Server is listening on port ${config.port || 8000}`);
       });
     } catch (error) {
-      console.log("Cannot connect to the server");
+      console.log("Cannot connect to the server:", error);
     }
   })
   .catch((error) => {
-    console.log("Invalid database connection!");
+    console.log("Invalid database connection!", error);
   });
